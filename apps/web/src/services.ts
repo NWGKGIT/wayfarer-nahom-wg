@@ -1,7 +1,4 @@
-import { createAuth } from "@wayfer-assesment/auth";
-import { createPrismaClient } from "@wayfer-assesment/db";
-
-import { ENV } from "./env.server";
-
-export const db = createPrismaClient(ENV);
-export const auth = createAuth(ENV, db);
+import { createPrismaClient } from '@wayfer-assesment/db';
+const globalDb = globalThis as unknown as { wayfarerDb?: ReturnType<typeof createPrismaClient> };
+export const db = globalDb.wayfarerDb ?? createPrismaClient({ DATABASE_URL: process.env.DATABASE_URL! });
+if (process.env.NODE_ENV !== 'production') globalDb.wayfarerDb = db;

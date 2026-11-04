@@ -1,9 +1,53 @@
 generator client {
   provider = "prisma-client"
-  output   = "../generated"
+  output = "../generated"
   moduleFormat = "esm"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id String @id
+  name String
+  reviews Review[]
+  bookings Booking[]
+}
+model Place {
+  id String @id
+  name String
+  category String
+  description String
+  openingHours String
+  reviews Review[]
+  slots TourSlot[]
+}
+model Review {
+  id String @id @default(cuid())
+  placeId String
+  userId String
+  rating Int
+  body String
+  createdAt DateTime @default(now())
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([placeId, userId])
+}
+model TourSlot {
+  id String @id
+  placeId String
+  startsAt DateTime
+  capacity Int
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+}
+model Booking {
+  id String @id @default(cuid())
+  slotId String
+  userId String
+  seats Int
+  createdAt DateTime @default(now())
+  slot TourSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -6,9 +6,7 @@
     "dev": "next dev --port 3001",
     "build": "next build",
     "check-types": "tsc --noEmit",
-    "start": "next start",
-    "env:generate": "varlock codegen",
-    "auth:generate": "varlock run -- bun x auth@latest generate --config src/services.ts --output ../../packages/db/prisma/schema/auth.prisma --yes"
+    "start": "next start"
   },
   "dependencies": {
     "@prisma/client": "catalog:",
@@ -18,20 +16,15 @@
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "^11.19.0",
-    "@varlock/nextjs-integration": "1.2.5",
-    "@wayfer-assesment/api": "workspace:*",
-    "@wayfer-assesment/auth": "workspace:*",
     "@wayfer-assesment/db": "workspace:*",
     "@wayfer-assesment/ui": "workspace:*",
     "babel-plugin-react-compiler": "^1.0.0",
-    "better-auth": "catalog:",
     "lucide-react": "catalog:",
     "next": "^16.3.4",
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "sonner": "catalog:",
-    "varlock": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

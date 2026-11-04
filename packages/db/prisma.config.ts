@@ -1,14 +1,7 @@
-import path from "node:path";
-
-import { defineConfig, env } from "prisma/config";
-import "varlock/auto-load";
-
+import path from 'node:path';
+import { defineConfig } from 'prisma/config';
 export default defineConfig({
-  schema: path.join("prisma", "schema"),
-  migrations: {
-    path: path.join("prisma", "migrations"),
-  },
-  datasource: {
-    url: env("DATABASE_URL"),
-  },
+  schema: path.join('prisma', 'schema'),
+  migrations: { path: path.join('prisma', 'migrations') },
+  datasource: { url: process.env.DATABASE_URL ?? 'postgresql://localhost:5432/wayfarer' },
 });

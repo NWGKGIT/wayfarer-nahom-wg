@@ -28,17 +28,14 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "check-types": "turbo run check-types",
-    "dev:web": "turbo run dev -F web --",
-    "db:push": "turbo run db:push -F @wayfer-assesment/db --",
-    "db:studio": "turbo run db:studio -F @wayfer-assesment/db --",
-    "db:generate": "turbo run db:generate -F @wayfer-assesment/db --",
-    "db:migrate": "turbo run db:migrate -F @wayfer-assesment/db --",
-    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/",
-    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/",
-    "auth:generate": "cd apps/web && bun run auth:generate"
+    "dev": "bun run --cwd apps/web dev",
+    "build": "bun run --cwd apps/web build",
+    "check-types": "bun run --cwd packages/db check-types && bun run --cwd apps/web check-types",
+    "db:generate": "packages/db/node_modules/.bin/prisma generate --config packages/db/prisma.config.ts",
+    "db:migrate": "bun --env-file=apps/web/.env packages/db/node_modules/prisma/build/index.js migrate deploy --config packages/db/prisma.config.ts",
+    "db:seed": "bun --env-file=apps/web/.env packages/db/prisma/seed.ts",
+    "setup": "bun run db:generate && bun run db:migrate && bun run db:seed",
+    "test": "bun --env-file=apps/web/.env test tests"
   },
   "dependencies": {
     "zod": "catalog:"

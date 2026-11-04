@@ -56,3 +56,8 @@ coverage
 .cache
 tmp
 temp
+
+# Local Supabase CLI state and test credentials
+supabase/.temp/
+supabase/.branches/
+.env.test
