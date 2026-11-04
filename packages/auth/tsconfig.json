@@ -1,0 +1,6 @@
+{
+  "extends": "@wayfer-assesment/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

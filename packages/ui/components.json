@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-lyra",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@wayfer-assesment/ui/components",
+    "utils": "@wayfer-assesment/ui/lib/utils",
+    "hooks": "@wayfer-assesment/ui/hooks",
+    "lib": "@wayfer-assesment/ui/lib",
+    "ui": "@wayfer-assesment/ui/components"
+  },
+  "menuColor": "default",
+  "menuAccent": "subtle",
+  "registries": {}
+}
