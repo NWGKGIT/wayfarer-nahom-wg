@@ -23,7 +23,6 @@
     "@types/pg": "^8.23.1",
     "@wayfer-assesment/config": "workspace:*",
     "prisma": "^7.10.0",
-    "typescript": "catalog:",
-    "varlock": "catalog:"
+    "typescript": "catalog:"
   }
 }

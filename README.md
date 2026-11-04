@@ -1,114 +1,27 @@
-# wayfer-assesment
+# Wayfarer
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Next.js, Self, TRPC, and more.
+A small Addis Ababa city guide for discovering places, reading and writing reviews, and reserving guided tours. Select a traveller in the header; this is a demonstration identity switcher, not authentication. Category filtering and ranking are performed on the server. Tour times are displayed in Addis Ababa time.
 
-## Features
+## Run locally
 
-- **TypeScript** - For type safety and improved developer experience
-- **Next.js** - Full-stack React framework
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **tRPC** - End-to-end type-safe APIs
-- **Prisma** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Turborepo** - Optimized monorepo build system
+Prerequisites: Bun 1.4, Node.js, and two separate PostgreSQL databases (for example, two Supabase projects). Copy `apps/web/.env.example` to `apps/web/.env` and set `DATABASE_URL` and `TEST_DATABASE_URL`. Use PostgreSQL connection strings only; no Supabase API keys or other services are needed. Prisma migrations need a connection that supports migrations, such as a direct or session pooler connection. Keep `.env` private.
 
-## Getting Started
+From the repository root:
 
-First, install the dependencies:
-
-```bash
+```sh
 bun install
-```
-
-## Database Setup
-
-Generate the Prisma client before development, typechecking, or building, including in CI and deployment builds. Run this again after changing the Prisma schema:
-
-```bash
-bun run db:generate
-```
-
-This project uses PostgreSQL with Prisma.
-
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/web/.env` file with your PostgreSQL connection details.
-
-3. Apply the schema to your database:
-
-```bash
-bun run db:push
-```
-
-Then, run the development server:
-
-```bash
+bun run setup
 bun run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the fullstack application.
+Open http://localhost:3001. Setup generates the Prisma client, applies migrations, and seeds the app database. Reseeding preserves existing reviews, bookings, and tour slots. The seeded dates are relative to the first seed, so they will eventually become stale.
 
-## UI Customization
+Run `bun run test` for the ranking unit test and the parallel HTTP booking test. The latter applies migrations to `TEST_DATABASE_URL`, creates uniquely named test records, and cleans them up. It refuses the app database if both URLs identify the same host, port, and database. Use a dedicated test database; migration deployment changes its schema. Run `bun run check-types` and `bun run build` for additional checks.
 
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
+## Known limitations
 
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
-
-```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
-```
-
-Import shared components like this:
-
-```tsx
-import { Button } from "@wayfer-assesment/ui/components/button";
-```
-
-### Add app-specific blocks
-
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
-
-## Environment Configuration
-
-Each app owns its environment schema in `.env.schema`. Varlock generates `src/env.ts` during installation; run `bun run env:generate` after changing a schema. Commit schemas, and keep secrets in ignored env files or your deployment platform.
-
-Import the generated `ENV` accessor in application code. Shared database and auth packages receive configuration or initialized clients from the application. See [Varlock's monorepo guide](https://varlock.dev/guides/monorepos/).
-
-Bun's automatic env loading is disabled in `bunfig.toml`; the framework integration or server bootstrap loads Varlock. Node deployments must include Varlock and its dependencies alongside the app schema.
-
-Run standalone Node/Bun tools that use Varlock from the owning app directory so they load that app's schema and env files. `env:generate` only generates TypeScript files; it does not initialize environment values in a subsequent command.
-
-## Project Structure
-
-```
-wayfer-assesment/
-├── apps/
-│   └── web/         # Fullstack application (Next.js)
-├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── api/         # API layer / business logic
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
-```
-
-## Available Scripts
-
-- `bun run dev`: Start all applications in development mode
-- `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
-- `bun run check-types`: Check TypeScript types across all apps
-- `bun run db:push`: Push schema changes to database
-- `bun run db:generate`: Generate database client/types
-- `bun run db:migrate`: Run database migrations
-- `bun run db:studio`: Open database studio UI
-
-## Better Auth Schema Generation
-
-After changing auth plugins or schema options, run `bun run auth:generate` from the project root. The script runs the Better Auth CLI through `varlock run` from the owning app directory, loading the auth instance from `src/services.ts`. Review the schema changes, then use your ORM's migration workflow to apply them.
+- There is no authentication, payment, cancellation, tour administration, or booking history, as these are outside the exercise. Anyone can act as a seeded user.
+- A repeated booking request can create another booking if enough seats remain; request idempotency is an optional bonus and is not implemented.
+- Seeded places, reviews, and tours are illustrative rather than verified travel information. Seeded dates are not automatically renewed.
+- Rankings use a fixed prior and the list is loaded as one small dataset; larger catalogues would need indexed aggregation and pagination.
+- Screenshots are not yet available: the database connections required to run the seeded application were not available during implementation.
