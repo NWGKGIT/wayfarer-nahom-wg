@@ -32,6 +32,8 @@
     "db:generate": "packages/db/node_modules/.bin/prisma generate --config packages/db/prisma.config.ts",
     "db:migrate": "bun --env-file=apps/web/.env packages/db/node_modules/prisma/build/index.js migrate deploy --config packages/db/prisma.config.ts",
     "db:seed": "bun --env-file=apps/web/.env packages/db/prisma/seed.ts",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
     "setup": "bun run db:generate && bun run db:migrate && bun run db:seed",
     "test": "bun --env-file=apps/web/.env test tests"
   },
