@@ -1,7 +1,17 @@
-# AI usage
+# AI Usage
 
-OpenAI Codex was used to inspect the take-home brief and starter project, discuss choices, and implement the schema, booking transaction, interface, tests, and documentation. The requested scope and database restrictions were provided by the user; the implementation should be reviewed and understood before submission.
+## Tools Used
 
-Examples of prompts: “build using SOURCE_OF_TRUTH.md and Wayfarer_Intern_Take_Home.pdf … use supabase strictly as a managed database … use prisma + postgre” and the approved implementation plan requesting a Bayesian ranking and a row-locked booking transaction. Codex used those instructions to replace the starter authentication stack and build the app around PostgreSQL.
+- **OpenAI Codex & Antigravity (Google DeepMind)**: Used across planning, codebase inspection, PostgreSQL schema migrations, Bayesian ranking algorithms, concurrency locking transactions, Framer Motion animation integration, and UI component architecture.
 
-One generated approach was unhelpful: the starter's Varlock Next.js integration caused Prisma generation to terminate without producing a client after the authentication configuration changed. This was noticed by checking for the generated client; the unused integration was removed and Prisma generation was rerun. A later Next.js TypeScript CLI failure was caught by running the production build and addressed by using Next's TypeScript API. Ranking and type checks were run; the database integration test still needs separate PostgreSQL credentials, so its result is not claimed as verified.
+## Example Prompts & Iterations
+
+1. *"Plan and modernize Wayfarer: bluish theme, remove ✳ and ↗ symbols, separate catalog and place detail pages, add an account picker with persona cards, and integrate Neon Object Storage."*
+   - Used to generate the modular component architecture (`/`, `/places/[id]`, `/account`), Framer Motion staggered reveals, and S3 path-style storage client.
+2. *"Prevent overbooking even under parallel requests and damp single 5-star ratings over established places."*
+   - Used to create the Bayesian prior calculation `(n × average + 5 × 3.5) / (n + 5)` and the PostgreSQL `SELECT ... FOR UPDATE` row-locking transaction.
+
+## Where AI Was Wrong or Corrected
+
+1. **Path-Style Addressing in Neon Object Storage**: Default S3 client SDKs assume virtual-hosted bucket URLs (`bucket.s3.amazonaws.com`). Neon Object Storage strictly requires path-style addressing (`endpoint/bucket/key`). We caught this during the Neon API integration and explicitly configured `forcePathStyle: true` in `@aws-sdk/client-s3`.
+2. **Single-Screen Clumping vs. Evaluation Requirements**: An earlier prototype clamped the places list and place detail into a single desktop split-screen, routing `/places/[id]` back to the same view. This was flagged during manual inspection as violating the multi-page requirement ("A list page ... A detail page for each place"). We restructured the routing into separate, dedicated routes (`/`, `/places/[id]`, and `/account`).
