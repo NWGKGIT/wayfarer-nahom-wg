@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from './UserContext';
+import { Logo } from './Logo';
 
 export function Navbar() {
   const { currentUser, signOut } = useUser();
@@ -16,9 +17,7 @@ export function Navbar() {
 
   return (
     <header className="topbar">
-      <Link href="/" className="brand" aria-label="Wayfarer Home">
-        wayfarer<span className="brand-dot">.</span>
-      </Link>
+      <Logo />
 
       <div className="top-location">
         A LITTLE GUIDE TO <strong>ADDIS ABABA, ETHIOPIA</strong>

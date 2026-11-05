@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, SEEDED_USERS } from '@/components/UserContext';
+import { Logo } from '@/components/Logo';
 import Link from 'next/link';
 
 const PERSONA_INFO: Record<string, { role: string; bio: string }> = {
@@ -31,6 +32,9 @@ export default function AccountPickerPage() {
 
   return (
     <div className="account-container">
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+        <Logo size="lg" />
+      </div>
       <div className="eyebrow" style={{ color: 'var(--blue)', marginBottom: '8px' }}>
         TRAVELLER IDENTITIES
       </div>

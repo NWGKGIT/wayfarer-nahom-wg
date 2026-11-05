@@ -42,12 +42,26 @@ export function PlaceCard({ place, index }: { place: PlaceData; index: number })
       </div>
 
       <div className="place-card-content">
-        <div className="place-card-meta">
+        <div
+          className="place-card-meta"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            whiteSpace: 'nowrap',
+            fontSize: '12px',
+            color: '#64748b',
+            marginBottom: '10px',
+            flexWrap: 'nowrap',
+          }}
+        >
           <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 700 }}>
             {String(index + 1).padStart(2, '0')}
           </span>
           <span className="place-card-dot">•</span>
-          <span className="place-card-stars">★ {place.average.toFixed(1)}</span>
+          <span className="place-card-stars" style={{ color: 'var(--amber)', fontWeight: 700 }}>
+            ★ {place.average.toFixed(1)}
+          </span>
           <span style={{ color: '#94a3b8' }}>
             ({place.count} {place.count === 1 ? 'review' : 'reviews'})
           </span>
@@ -59,13 +73,12 @@ export function PlaceCard({ place, index }: { place: PlaceData; index: number })
 
         <p className="place-card-desc">{place.description}</p>
 
-        <div className="place-card-footer">
+        <div className="place-card-footer" style={{ borderTop: '1px solid #f1f5f9', paddingTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', color: '#64748b' }}>
           <span>
             {place.slots && place.slots.length > 0
-              ? `${place.slots.length} ${place.slots.length === 1 ? 'guided tour' : 'guided tours'}`
-              : 'View details'}
+              ? `${place.slots.length} ${place.slots.length === 1 ? 'guided tour available' : 'guided tours available'}`
+              : 'Open for visits'}
           </span>
-          <span style={{ fontWeight: 700, fontSize: '13px' }}>Explore →</span>
         </div>
       </div>
     </Link>

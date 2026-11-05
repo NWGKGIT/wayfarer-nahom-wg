@@ -105,7 +105,7 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
   if (loading) {
     return (
       <div className="detail-container">
-        <p className="state" style={{ textAlign: 'center', padding: '60px 0' }}>
+        <p className="state" style={{ textAlign: 'center', padding: '60px 0', color: '#64748b' }}>
           Finding place details…
         </p>
       </div>
@@ -129,26 +129,22 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
         ← Back to places
       </Link>
 
-      <div className="detail-card">
-        {/* Detail Top Tag & Index */}
+      {/* Hero Overview Card */}
+      <div className="detail-hero-card">
         <div className="detail-top">
           <span className="tag">{place.category}</span>
           <span className="detail-index">ADDIS ABABA &nbsp;/&nbsp; CITY GUIDE</span>
         </div>
 
-        {/* Place Title */}
         <h1 className="detail-title">{place.name}</h1>
 
-        {/* Rating Meta */}
         <div className="detail-meta">
-          <span style={{ color: 'var(--amber)', fontWeight: 700 }}>★</span>
-          <strong>{place.average.toFixed(1)}</strong>
+          <span style={{ color: 'var(--amber)', fontWeight: 700 }}>★ {place.average.toFixed(1)}</span>
           <span>({place.count} {place.count === 1 ? 'review' : 'reviews'})</span>
           <span style={{ color: '#cbd5e1' }}>•</span>
           <span>Open {place.openingHours}</span>
         </div>
 
-        {/* Hero Image */}
         <img
           src={place.imageUrl || defaultImage}
           alt={place.name}
@@ -158,23 +154,23 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
           }}
         />
 
-        {/* Description */}
         <p className="detail-desc">{place.description}</p>
+      </div>
 
-        {/* Feedback Notices */}
-        {error && (
-          <div className="message error" role="alert">
-            {error}
-          </div>
-        )}
-        {notice && (
-          <div className="message success" role="status">
-            {notice}
-          </div>
-        )}
+      {/* Feedback Messages */}
+      {error && (
+        <div className="message error" role="alert">
+          {error}
+        </div>
+      )}
+      {notice && (
+        <div className="message success" role="status">
+          {notice}
+        </div>
+      )}
 
-        {/* Guided Tours Section */}
-        <div className="divider" />
+      {/* Guided Tours Card */}
+      <div className="detail-section-card">
         <div className="block-heading">
           <div className="eyebrow">MAKE A LITTLE TIME</div>
           <h3>Guided tours</h3>
@@ -235,13 +231,14 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
             </div>
           </>
         ) : (
-          <p className="helper" style={{ padding: '10px 0' }}>
+          <p className="helper" style={{ padding: '8px 0', margin: 0 }}>
             No guided tours currently scheduled for this location.
           </p>
         )}
+      </div>
 
-        {/* Reviews Section */}
-        <div className="divider" />
+      {/* Reviews Card Section (Distinct Cards) */}
+      <div className="detail-section-card">
         <div className="block-heading">
           <div className="eyebrow">FROM FELLOW TRAVELLERS</div>
           <h3>
@@ -249,73 +246,75 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
           </h3>
         </div>
 
-        <div className="reviews">
-          {place.reviews.length > 0 ? (
-            place.reviews.map(review => (
-              <div className="review" key={review.id}>
-                <div className="avatar">{review.user.name.charAt(0)}</div>
-                <div style={{ flex: 1 }}>
-                  <strong>{review.user.name}</strong>
-                  <div className="review-stars">
-                    {'★'.repeat(review.rating)}
-                    <span>{'★'.repeat(5 - review.rating)}</span>
+        {place.reviews.length > 0 ? (
+          <div className="review-cards-grid">
+            {place.reviews.map(review => (
+              <div className="review-card" key={review.id}>
+                <div className="review-card-header">
+                  <div className="review-card-avatar">{review.user.name.charAt(0)}</div>
+                  <div className="review-card-meta">
+                    <strong className="review-card-author">{review.user.name}</strong>
+                    <div className="review-card-stars">
+                      {'★'.repeat(review.rating)}
+                      <span>{'★'.repeat(5 - review.rating)}</span>
+                    </div>
                   </div>
-                  <p>{review.body}</p>
                 </div>
+                <p className="review-card-body">{review.body}</p>
               </div>
-            ))
-          ) : (
-            <p className="helper" style={{ padding: '10px 0' }}>
-              No reviews yet. Be the first traveller to leave a review!
-            </p>
-          )}
-        </div>
-
-        {/* Leave Your Mark Review Form */}
-        <form
-          className="review-form"
-          onSubmit={e => {
-            e.preventDefault();
-            submitAction(
-              { type: 'review', placeId: place.id, rating, body },
-              'Your review has been saved.',
-              true
-            );
-          }}
-        >
-          <h4>Leave your mark</h4>
-          <p>Visited? Share what made it memorable.</p>
-
-          <label>
-            Your rating
-            <select
-              value={rating}
-              onChange={e => setRating(Number(e.target.value))}
-            >
-              {[5, 4, 3, 2, 1].map(n => (
-                <option value={n} key={n}>
-                  {n} {n === 1 ? 'star' : 'stars'}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="review-label">
-            Your review
-            <textarea
-              required
-              maxLength={500}
-              value={body}
-              onChange={e => setBody(e.target.value)}
-              placeholder="Tell us a little about your visit…"
-            />
-          </label>
-
-          <button disabled={busy || !userId} type="submit">
-            {userId ? 'Save review' : 'Select persona to review'}
-          </button>
-        </form>
+            ))}
+          </div>
+        ) : (
+          <p className="helper" style={{ padding: '8px 0', margin: 0 }}>
+            No reviews yet. Be the first traveller to leave a review!
+          </p>
+        )}
       </div>
+
+      {/* Leave Your Mark Form (Standalone Card) */}
+      <form
+        className="review-form"
+        onSubmit={e => {
+          e.preventDefault();
+          submitAction(
+            { type: 'review', placeId: place.id, rating, body },
+            'Your review has been saved.',
+            true
+          );
+        }}
+      >
+        <h4>Leave your mark</h4>
+        <p>Visited? Share what made it memorable.</p>
+
+        <label>
+          Your rating
+          <select
+            value={rating}
+            onChange={e => setRating(Number(e.target.value))}
+          >
+            {[5, 4, 3, 2, 1].map(n => (
+              <option value={n} key={n}>
+                {n} {n === 1 ? 'star' : 'stars'}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="review-label">
+          Your review
+          <textarea
+            required
+            maxLength={500}
+            value={body}
+            onChange={e => setBody(e.target.value)}
+            placeholder="Tell us a little about your visit…"
+          />
+        </label>
+
+        <button disabled={busy || !userId} type="submit">
+          {userId ? 'Save review' : 'Select persona to review'}
+        </button>
+      </form>
     </div>
   );
 }
