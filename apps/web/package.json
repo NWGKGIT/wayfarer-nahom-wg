@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1162.0",
     "@prisma/client": "catalog:",
     "@swc/helpers": "^0.5.23",
     "@tanstack/react-form": "^1.33.5",
@@ -19,6 +20,7 @@
     "@wayfer-assesment/db": "workspace:*",
     "@wayfer-assesment/ui": "workspace:*",
     "babel-plugin-react-compiler": "^1.0.0",
+    "framer-motion": "^14.9.1",
     "lucide-react": "catalog:",
     "next": "^16.3.4",
     "next-themes": "catalog:",
