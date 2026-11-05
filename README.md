@@ -28,13 +28,13 @@ Built with Next.js (App Router), React 19, Tailwind CSS, Framer Motion, Prisma O
 
 ### 1. One-Shot Setup with Docker (Recommended)
 
-Start local PostgreSQL and MinIO S3 storage:
+Start local PostgreSQL and RustFS S3 storage:
 
 ```sh
 docker compose up -d
 ```
 
-*(This automatically starts the app database on port `54322`, the isolated test database on port `54323`, and local S3 object storage on port `9000`)*.
+*(This automatically starts the app database on port `54322`, the isolated test database on port `54323`, and local RustFS S3 object storage on port `9000`)*.
 
 Copy environment variables and run setup:
 
