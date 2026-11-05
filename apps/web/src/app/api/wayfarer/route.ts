@@ -7,7 +7,36 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
+    const id = url.searchParams.get('id');
     const category = url.searchParams.get('category');
+
+    if (id) {
+      const [users, place] = await Promise.all([
+        db.user.findMany({ orderBy: { name: 'asc' } }),
+        db.place.findUnique({
+          where: { id },
+          include: {
+            reviews: { include: { user: true }, orderBy: { createdAt: 'desc' } },
+            slots: { include: { bookings: { select: { seats: true } } }, orderBy: { startsAt: 'asc' } },
+          },
+        }),
+      ]);
+      if (!place) return Response.json({ error: 'Place not found.' }, { status: 404 });
+      const count = place.reviews.length;
+      const average = count ? place.reviews.reduce((sum, review) => sum + review.rating, 0) / count : 0;
+      const result = {
+        ...place,
+        average,
+        count,
+        score: rankingScore(average, count),
+        slots: place.slots.map(({ bookings, ...slot }) => ({
+          ...slot,
+          remaining: slot.capacity - bookings.reduce((sum, booking) => sum + booking.seats, 0),
+        })),
+      };
+      return Response.json({ users, place: result });
+    }
+
     const [users, places] = await Promise.all([
       db.user.findMany({ orderBy: { name: 'asc' } }),
       db.place.findMany({
