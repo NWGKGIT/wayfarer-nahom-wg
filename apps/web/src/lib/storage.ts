@@ -54,3 +54,4 @@ export async function uploadToStorage(
   const publicUrl = `${cleanEndpoint}/${bucket}/${cleanKey}`;
   return { url: publicUrl, key: cleanKey };
 }
+

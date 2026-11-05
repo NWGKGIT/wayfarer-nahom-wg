@@ -115,3 +115,4 @@ export function PlaceCard({ place, index }: { place: PlaceData; index: number })
     </motion.div>
   );
 }
+

@@ -49,3 +49,4 @@ export function Logo({ className = '', size = 'md' }: { className?: string; size
     </Link>
   );
 }
+

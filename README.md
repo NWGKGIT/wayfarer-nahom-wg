@@ -39,7 +39,8 @@ docker compose up -d
 Copy environment variables and run setup:
 
 ```sh
-cp apps/web/.env.example apps/web/.env
+cp .env.example .env
+cp .env.example apps/web/.env
 bun install
 bun run setup
 bun run dev
