@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     const category = url.searchParams.get('category');
+    const sort = url.searchParams.get('sort') || 'top';
 
     if (id) {
       const [users, place] = await Promise.all([
@@ -48,7 +49,12 @@ export async function GET(request: Request) {
       const count = place.reviews.length;
       const average = count ? place.reviews.reduce((sum, review) => sum + review.rating, 0) / count : 0;
       return { ...place, average, count, score: rankingScore(average, count), slots: place.slots.map(({ bookings, ...slot }) => ({ ...slot, remaining: slot.capacity - bookings.reduce((sum, booking) => sum + booking.seats, 0) })) };
-    }).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+    }).sort((a, b) => {
+      if (sort === 'reviews') return b.count - a.count || b.average - a.average || a.name.localeCompare(b.name);
+      if (sort === 'rating') return b.average - a.average || b.count - a.count || a.name.localeCompare(b.name);
+      if (sort === 'name') return a.name.localeCompare(b.name);
+      return b.score - a.score || a.name.localeCompare(b.name);
+    });
     return Response.json({ users, places: result });
   } catch (error) {
     console.error('Could not load places', error);
