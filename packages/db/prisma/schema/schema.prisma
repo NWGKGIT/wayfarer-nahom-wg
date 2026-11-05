@@ -20,6 +20,7 @@ model Place {
   category String
   description String
   openingHours String
+  imageUrl String?
   reviews Review[]
   slots TourSlot[]
 }
