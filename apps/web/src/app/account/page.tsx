@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/components/UserContext';
@@ -10,6 +10,10 @@ import { motion } from 'framer-motion';
 export default function AccountPickerPage() {
   const { userId, setUserId, users } = useUser();
   const router = useRouter();
+
+  useEffect(() => {
+    document.title = 'Choose your persona · Wayfarer';
+  }, []);
 
   const handleSelect = (id: string) => {
     setUserId(id);

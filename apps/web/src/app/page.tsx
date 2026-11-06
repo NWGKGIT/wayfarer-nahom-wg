@@ -36,6 +36,7 @@ export default function HomePage() {
   }, [category, sort]);
 
   useEffect(() => {
+    document.title = 'Wayfarer — Addis Ababa City Guide';
     fetchPlaces();
   }, [fetchPlaces]);
 

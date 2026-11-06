@@ -60,6 +60,9 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not load place details.');
       setPlace(data.place);
+      if (data.place?.name) {
+        document.title = `${data.place.name} · Wayfarer`;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error loading details.');
     } finally {

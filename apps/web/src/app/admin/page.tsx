@@ -114,6 +114,7 @@ export default function AdminDashboardPage() {
   }, [isAdmin, slotPlaceId]);
 
   useEffect(() => {
+    document.title = 'Curator Control Room · Wayfarer';
     loadData();
   }, [loadData]);
 
