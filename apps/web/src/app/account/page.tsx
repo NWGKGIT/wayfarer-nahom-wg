@@ -84,7 +84,7 @@ export default function AccountPickerPage() {
                   handleSelect(user.id);
                 }}
               >
-                {isSelected ? 'Continue exploring →' : `Select ${user.name} →`}
+                {isSelected ? 'Continue exploring' : `Select ${user.name}`}
               </button>
             </div>
           );
@@ -92,17 +92,16 @@ export default function AccountPickerPage() {
       </div>
 
       <div style={{ marginTop: '36px' }}>
-        <Link
-          href="/"
-          style={{
-            fontSize: '12px',
-            color: 'var(--blue)',
-            textDecoration: 'none',
-            fontWeight: 600,
+        <button
+          type="button"
+          onClick={() => {
+            setUserId(null);
+            router.push('/');
           }}
+          className="btn-guest"
         >
-          Browse as guest instead →
-        </Link>
+          Browse as guest instead
+        </button>
       </div>
     </div>
   );

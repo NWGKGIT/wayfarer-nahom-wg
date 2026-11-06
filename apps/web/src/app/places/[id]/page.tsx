@@ -99,9 +99,6 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
     }
   }
 
-  const defaultImage =
-    'https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?auto=format&fit=crop&w=1200&q=80';
-
   if (loading) {
     return (
       <div className="detail-container">
@@ -117,23 +114,26 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
       <div className="detail-container" style={{ textAlign: 'center', padding: '60px 0' }}>
         <h2 style={{ fontFamily: 'DM Serif Display', fontSize: '28px' }}>Place not found</h2>
         <Link href="/" className="btn-back" style={{ marginTop: '16px' }}>
-          ← Return to city guide
+          Back to places
         </Link>
       </div>
     );
   }
 
+  const fallbackImage = `/places/${place.id}.jpg`;
+  const displayImage = place.imageUrl && !place.imageUrl.includes('unsplash') ? place.imageUrl : fallbackImage;
+
   return (
     <div className="detail-container">
       <Link href="/" className="btn-back">
-        ← Back to places
+        Back to places
       </Link>
 
       {/* Hero Overview Card */}
       <div className="detail-hero-card">
         <div className="detail-top">
           <span className="tag">{place.category}</span>
-          <span className="detail-index">ADDIS ABABA &nbsp;/&nbsp; CITY GUIDE</span>
+          <span className="detail-index">ADDIS ABABA / CITY GUIDE</span>
         </div>
 
         <h1 className="detail-title">{place.name}</h1>
@@ -146,11 +146,11 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         <img
-          src={place.imageUrl || defaultImage}
+          src={displayImage}
           alt={place.name}
           className="detail-hero-image"
           onError={e => {
-            (e.target as HTMLImageElement).src = defaultImage;
+            (e.target as HTMLImageElement).src = fallbackImage;
           }}
         />
 

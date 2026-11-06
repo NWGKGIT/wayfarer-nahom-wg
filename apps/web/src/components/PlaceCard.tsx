@@ -22,9 +22,8 @@ export type PlaceData = {
 };
 
 export function PlaceCard({ place, index }: { place: PlaceData; index: number }) {
-  const defaultImage =
-    'https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?auto=format&fit=crop&w=800&q=80';
-  const displayImage = place.imageUrl || defaultImage;
+  const fallbackImage = `/places/${place.id}.jpg`;
+  const displayImage = place.imageUrl && !place.imageUrl.includes('unsplash') ? place.imageUrl : fallbackImage;
 
   return (
     <Link href={`/places/${place.id}`} className="place-card">
@@ -35,7 +34,7 @@ export function PlaceCard({ place, index }: { place: PlaceData; index: number })
           className="place-card-image"
           loading="lazy"
           onError={e => {
-            (e.target as HTMLImageElement).src = defaultImage;
+            (e.target as HTMLImageElement).src = fallbackImage;
           }}
         />
         <span className="place-card-category">{place.category}</span>

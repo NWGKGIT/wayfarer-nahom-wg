@@ -2,16 +2,16 @@ import { createPrismaClient } from '../src/index';
 const db = createPrismaClient({ DATABASE_URL: process.env.DATABASE_URL! });
 const users = [{ id: 'sara', name: 'Sara' }, { id: 'abel', name: 'Abel' }, { id: 'liya', name: 'Liya' }];
 const places = [
-  ['national-museum','National Museum of Ethiopia','History','Discover Ethiopia’s remarkable history and the story of Lucy.','09:00–17:30','https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?auto=format&fit=crop&w=1200&q=80'],
-  ['holy-trinity','Holy Trinity Cathedral','History','A landmark cathedral known for its architecture and history.','08:00–17:00','https://images.unsplash.com/photo-1548625361-195feee15f8a?auto=format&fit=crop&w=1200&q=80'],
-  ['entoto-park','Entoto Park','Nature','Woodland trails and sweeping views above the city.','09:00–18:00','https://images.unsplash.com/photo-1511497584788-87676104235f?auto=format&fit=crop&w=1200&q=80'],
-  ['tomoca','Tomoca Coffee','Food','A classic stop for Ethiopian coffee in the heart of Addis.','07:30–19:00','https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80'],
-  ['merkato','Addis Merkato','Food','Explore a vast market filled with spices, crafts and local life.','08:00–18:00','https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=1200&q=80'],
-  ['unity-park','Unity Park','Nature','Gardens, heritage and wildlife within the Grand Palace grounds.','09:00–17:00','https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1200&q=80'],
-  ['red-terror','Red Terror Martyrs Memorial Museum','History','A thoughtful museum remembering a difficult chapter of Ethiopian history.','08:00–18:00','https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80'],
-  ['friendship-park','Friendship Park','Nature','An inviting green space for a quiet walk.','09:00–18:00','https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=1200&q=80'],
-  ['yod-abyssinia','Yod Abyssinia','Food','Ethiopian dishes and traditional music in a lively setting.','12:00–23:00','https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80'],
-  ['new-coffee','New Coffee House','Food','A small neighbourhood coffee stop.','08:00–18:00','https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80'],
+  ['national-museum','National Museum of Ethiopia','History','Discover Ethiopia’s remarkable history and the story of Lucy.','09:00–17:30','/places/national-museum.jpg'],
+  ['holy-trinity','Holy Trinity Cathedral','History','A landmark cathedral known for its architecture and history.','08:00–17:00','/places/holy-trinity.jpg'],
+  ['entoto-park','Entoto Park','Nature','Woodland trails and sweeping views above the city.','09:00–18:00','/places/entoto-park.jpg'],
+  ['tomoca','Tomoca Coffee','Food','A classic stop for Ethiopian coffee in the heart of Addis.','07:30–19:00','/places/tomoca.jpg'],
+  ['merkato','Addis Merkato','Food','Explore a vast market filled with spices, crafts and local life.','08:00–18:00','/places/merkato.jpg'],
+  ['unity-park','Unity Park','Nature','Gardens, heritage and wildlife within the Grand Palace grounds.','09:00–17:00','/places/unity-park.jpg'],
+  ['red-terror','Red Terror Martyrs Memorial Museum','History','A thoughtful museum remembering a difficult chapter of Ethiopian history.','08:00–18:00','/places/red-terror.jpg'],
+  ['friendship-park','Friendship Park','Nature','An inviting green space for a quiet walk.','09:00–18:00','/places/friendship-park.jpg'],
+  ['yod-abyssinia','Yod Abyssinia','Food','Ethiopian dishes and traditional music in a lively setting.','12:00–23:00','/places/yod-abyssinia.jpg'],
+  ['new-coffee','New Coffee House','Food','A small neighbourhood coffee stop.','08:00–18:00','/places/new-coffee.jpg'],
 ] as const;
 try {
   for (const user of users) await db.user.upsert({ where: { id: user.id }, create: user, update: {} });

@@ -27,6 +27,7 @@ export async function GET(request: Request) {
       const average = count ? place.reviews.reduce((sum, review) => sum + review.rating, 0) / count : 0;
       const result = {
         ...place,
+        imageUrl: place.imageUrl && !place.imageUrl.includes('unsplash') ? place.imageUrl : `/places/${place.id}.jpg`,
         average,
         count,
         score: rankingScore(average, count),
@@ -48,7 +49,17 @@ export async function GET(request: Request) {
     const result = places.map(place => {
       const count = place.reviews.length;
       const average = count ? place.reviews.reduce((sum, review) => sum + review.rating, 0) / count : 0;
-      return { ...place, average, count, score: rankingScore(average, count), slots: place.slots.map(({ bookings, ...slot }) => ({ ...slot, remaining: slot.capacity - bookings.reduce((sum, booking) => sum + booking.seats, 0) })) };
+      return {
+        ...place,
+        imageUrl: place.imageUrl && !place.imageUrl.includes('unsplash') ? place.imageUrl : `/places/${place.id}.jpg`,
+        average,
+        count,
+        score: rankingScore(average, count),
+        slots: place.slots.map(({ bookings, ...slot }) => ({
+          ...slot,
+          remaining: slot.capacity - bookings.reduce((sum, booking) => sum + booking.seats, 0),
+        })),
+      };
     }).sort((a, b) => {
       if (sort === 'reviews') return b.count - a.count || b.average - a.average || a.name.localeCompare(b.name);
       if (sort === 'rating') return b.average - a.average || b.count - a.count || a.name.localeCompare(b.name);
