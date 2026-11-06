@@ -16,8 +16,6 @@
       "react-dom": "^19.2.8",
       "sonner": "^2.0.8",
       "@prisma/client": "^7.10.0",
-      "@trpc/server": "^11.19.0",
-      "@trpc/client": "^11.19.0",
       "@tailwindcss/postcss": "^4.3.3",
       "@types/react": "^19.2.18",
       "@types/react-dom": "^19.2.7",
