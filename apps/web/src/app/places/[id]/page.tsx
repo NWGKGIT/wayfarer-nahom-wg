@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/components/UserContext';
+import { motion } from 'framer-motion';
 
 type User = { id: string; name: string };
 type Review = { id: string; userId: string; rating: number; body: string; createdAt: string; user: User };
@@ -102,9 +103,15 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
   if (loading) {
     return (
       <div className="detail-container">
-        <p className="state" style={{ textAlign: 'center', padding: '60px 0', color: '#64748b' }}>
-          Finding place details…
-        </p>
+        <div style={{ height: '20px', width: '120px', borderRadius: '4px', marginBottom: '8px' }} className="skeleton-shimmer" />
+        <div className="detail-hero-card">
+          <div style={{ height: '18px', width: '90px', borderRadius: '4px', marginBottom: '14px' }} className="skeleton-shimmer" />
+          <div style={{ height: '36px', width: '55%', borderRadius: '6px', marginBottom: '16px' }} className="skeleton-shimmer" />
+          <div style={{ height: '16px', width: '220px', borderRadius: '4px', marginBottom: '20px' }} className="skeleton-shimmer" />
+          <div style={{ width: '100%', height: '340px', borderRadius: '8px', marginBottom: '20px' }} className="skeleton-shimmer" />
+          <div style={{ height: '16px', width: '90%', borderRadius: '4px', marginBottom: '8px' }} className="skeleton-shimmer" />
+          <div style={{ height: '16px', width: '70%', borderRadius: '4px' }} className="skeleton-shimmer" />
+        </div>
       </div>
     );
   }
@@ -124,7 +131,12 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
   const displayImage = place.imageUrl && !place.imageUrl.includes('unsplash') ? place.imageUrl : fallbackImage;
 
   return (
-    <div className="detail-container">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="detail-container"
+    >
       <Link href="/" className="btn-back">
         Back to places
       </Link>
@@ -315,6 +327,6 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
           {userId ? 'Save review' : 'Select persona to review'}
         </button>
       </form>
-    </div>
+    </motion.div>
   );
 }

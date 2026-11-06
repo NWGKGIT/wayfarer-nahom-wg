@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, SEEDED_USERS } from '@/components/UserContext';
 import { Logo } from '@/components/Logo';
-import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 const PERSONA_INFO: Record<string, { role: string; bio: string }> = {
   sara: {
@@ -53,7 +53,7 @@ export default function AccountPickerPage() {
       </p>
 
       <div className="account-cards">
-        {SEEDED_USERS.map(user => {
+        {SEEDED_USERS.map((user, idx) => {
           const info = PERSONA_INFO[user.id] || {
             role: 'Traveller',
             bio: 'Exploring the best spots in Addis Ababa.',
@@ -61,8 +61,11 @@ export default function AccountPickerPage() {
           const isSelected = userId === user.id;
 
           return (
-            <div
+            <motion.div
               key={user.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.08, duration: 0.3 }}
               className={`account-card ${isSelected ? 'selected' : ''}`}
               onClick={() => handleSelect(user.id)}
             >
@@ -86,7 +89,7 @@ export default function AccountPickerPage() {
               >
                 {isSelected ? 'Continue exploring' : `Select ${user.name}`}
               </button>
-            </div>
+            </motion.div>
           );
         })}
       </div>
