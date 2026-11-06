@@ -1,6 +1,11 @@
 import { createPrismaClient } from '../src/index';
 const db = createPrismaClient({ DATABASE_URL: process.env.DATABASE_URL! });
-const users = [{ id: 'sara', name: 'Sara' }, { id: 'abel', name: 'Abel' }, { id: 'liya', name: 'Liya' }];
+const users = [
+  { id: 'sara', name: 'Sara' },
+  { id: 'abel', name: 'Abel' },
+  { id: 'liya', name: 'Liya' },
+  { id: 'admin', name: 'Admin' },
+];
 const places = [
   ['national-museum','National Museum of Ethiopia','History','Discover Ethiopia’s remarkable history and the story of Lucy.','09:00–17:30','/places/national-museum.jpg'],
   ['holy-trinity','Holy Trinity Cathedral','History','A landmark cathedral known for its architecture and history.','08:00–17:00','/places/holy-trinity.jpg'],

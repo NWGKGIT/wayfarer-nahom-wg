@@ -1,33 +1,23 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useUser, SEEDED_USERS } from '@/components/UserContext';
+import { useUser } from '@/components/UserContext';
 import { Logo } from '@/components/Logo';
 import { motion } from 'framer-motion';
 
-const PERSONA_INFO: Record<string, { role: string; bio: string }> = {
-  sara: {
-    role: 'Cultural & History Enthusiast',
-    bio: 'Fascinated by Ethiopia’s ancient heritage, landmark cathedrals, and national history museums.',
-  },
-  abel: {
-    role: 'Coffee & Culinary Explorer',
-    bio: 'Passionate about traditional Ethiopian coffee ceremonies, roasts, and authentic local cuisine.',
-  },
-  liya: {
-    role: 'Nature & High-Altitude Adventurer',
-    bio: 'Loves woodland mountain trails, Entoto scenic overlooks, and peaceful city gardens.',
-  },
-};
-
 export default function AccountPickerPage() {
-  const { userId, setUserId } = useUser();
+  const { userId, setUserId, users } = useUser();
   const router = useRouter();
 
   const handleSelect = (id: string) => {
     setUserId(id);
-    router.push('/');
+    if (id === 'admin') {
+      router.push('/admin');
+    } else {
+      router.push('/');
+    }
   };
 
   return (
@@ -49,52 +39,58 @@ export default function AccountPickerPage() {
         Choose your persona
       </h1>
       <p style={{ color: '#64748b', fontSize: '14px', maxWidth: '520px', margin: '0 auto' }}>
-        Select a seeded traveller persona to explore places in Addis Ababa, leave reviews, and book guided tours.
+        Select a traveller persona to browse Addis Ababa, submit reviews, and reserve guided tours, or enter as Administrator to curate the city catalog.
       </p>
 
       <div className="account-cards">
-        {SEEDED_USERS.map((user, idx) => {
-          const info = PERSONA_INFO[user.id] || {
-            role: 'Traveller',
-            bio: 'Exploring the best spots in Addis Ababa.',
-          };
+        {users.map((user, idx) => {
           const isSelected = userId === user.id;
+          const isAdmin = user.id === 'admin';
 
           return (
             <motion.div
               key={user.id}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.08, duration: 0.3 }}
-              className={`account-card ${isSelected ? 'selected' : ''}`}
+              transition={{ delay: idx * 0.06, duration: 0.3 }}
+              className={`account-card ${isSelected ? 'selected' : ''} ${isAdmin ? 'account-card-admin' : ''}`}
               onClick={() => handleSelect(user.id)}
             >
               <div className="account-card-header">
-                <div className="account-card-avatar">{user.name.charAt(0)}</div>
+                <div className={`account-card-avatar ${isAdmin ? 'admin-avatar' : ''}`}>
+                  {user.name.charAt(0)}
+                </div>
                 <div>
-                  <h3 className="account-card-title">{user.name}</h3>
-                  <span className="account-card-role">{info.role}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <h3 className="account-card-title">{user.name}</h3>
+                    {isAdmin && <span className="admin-tag-small">Curator</span>}
+                  </div>
+                  <span className="account-card-role">{user.role || (isAdmin ? 'System & City Curator' : 'Traveller')}</span>
                 </div>
               </div>
 
-              <p className="account-card-bio">{info.bio}</p>
+              <p className="account-card-bio">{user.bio || 'Exploring places in Addis Ababa.'}</p>
 
-              <button
-                type="button"
-                className="account-card-btn"
-                onClick={e => {
-                  e.stopPropagation();
-                  handleSelect(user.id);
-                }}
-              >
-                {isSelected ? 'Continue exploring' : `Select ${user.name}`}
-              </button>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                <button
+                  type="button"
+                  className="account-card-btn"
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleSelect(user.id);
+                  }}
+                >
+                  {isSelected
+                    ? (isAdmin ? 'Go to Admin Dashboard' : 'Continue exploring')
+                    : (isAdmin ? 'Curate as Admin' : `Select ${user.name}`)}
+                </button>
+              </div>
             </motion.div>
           );
         })}
       </div>
 
-      <div style={{ marginTop: '36px' }}>
+      <div style={{ marginTop: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
         <button
           type="button"
           onClick={() => {
@@ -105,6 +101,12 @@ export default function AccountPickerPage() {
         >
           Browse as guest instead
         </button>
+
+        {userId === 'admin' && (
+          <Link href="/admin" className="btn-guest" style={{ background: 'var(--blue)', color: '#ffffff', borderColor: 'var(--blue)' }}>
+            Open Admin Dashboard
+          </Link>
+        )}
       </div>
     </div>
   );

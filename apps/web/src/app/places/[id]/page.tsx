@@ -27,7 +27,7 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
   const resolvedParams = use(params);
   const placeId = resolvedParams.id;
   const router = useRouter();
-  const { userId } = useUser();
+  const { userId, isAdmin } = useUser();
 
   const [place, setPlace] = useState<Place | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +37,16 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
 
   // Tour booking seats
   const [seats, setSeats] = useState(1);
+
+  // Admin inline tour creation
+  const [showAddSlot, setShowAddSlot] = useState(false);
+  const [newSlotDate, setNewSlotDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 3);
+    d.setHours(9, 0, 0, 0);
+    return d.toISOString().slice(0, 16);
+  });
+  const [newSlotCapacity, setNewSlotCapacity] = useState(10);
 
   // Review form state (starts completely blank, never prefilled)
   const [rating, setRating] = useState(5);
@@ -95,6 +105,55 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleAdminCreateSlot(e: React.FormEvent) {
+    e.preventDefault();
+    if (!place) return;
+    setBusy(true);
+    setError('');
+    setNotice('');
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-User-Id': 'admin' },
+        body: JSON.stringify({
+          action: 'create-slot',
+          placeId: place.id,
+          startsAt: new Date(newSlotDate).toISOString(),
+          capacity: Number(newSlotCapacity),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to schedule tour.');
+      await loadPlace();
+      setNotice('New guided tour scheduled successfully.');
+      setShowAddSlot(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error scheduling tour.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleAdminDeleteSlot(slotId: string) {
+    if (!confirm('Are you sure you want to cancel this tour slot?')) return;
+    setBusy(true);
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-User-Id': 'admin' },
+        body: JSON.stringify({ action: 'delete-slot', id: slotId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to delete tour.');
+      await loadPlace();
+      setNotice('Tour slot cancelled.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error cancelling slot.');
     } finally {
       setBusy(false);
     }
@@ -183,11 +242,59 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
 
       {/* Guided Tours Card */}
       <div className="detail-section-card">
-        <div className="block-heading">
-          <div className="eyebrow">MAKE A LITTLE TIME</div>
-          <h3>Guided tours</h3>
+        <div className="block-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+          <div>
+            <div className="eyebrow">MAKE A LITTLE TIME</div>
+            <h3>Guided tours</h3>
+          </div>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setShowAddSlot(!showAddSlot)}
+              className="admin-inline-btn"
+            >
+              {showAddSlot ? 'Cancel' : '+ Schedule Tour'}
+            </button>
+          )}
         </div>
         <p className="helper">See the city with someone who knows it.</p>
+
+        {isAdmin && showAddSlot && (
+          <form onSubmit={handleAdminCreateSlot} className="admin-inline-form">
+            <h5 style={{ margin: '0 0 10px', fontSize: '13px', fontWeight: 700, color: 'var(--blue)' }}>
+              Schedule a Guided Tour Slot
+            </h5>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <label style={{ flex: 1, minWidth: '200px', fontSize: '12px' }}>
+                Date & Time (Addis Ababa Time)
+                <input
+                  type="datetime-local"
+                  required
+                  value={newSlotDate}
+                  onChange={e => setNewSlotDate(e.target.value)}
+                  className="admin-input"
+                  style={{ marginTop: '4px' }}
+                />
+              </label>
+              <label style={{ width: '100px', fontSize: '12px' }}>
+                Seats Capacity
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  required
+                  value={newSlotCapacity}
+                  onChange={e => setNewSlotCapacity(Number(e.target.value))}
+                  className="admin-input"
+                  style={{ marginTop: '4px' }}
+                />
+              </label>
+            </div>
+            <button type="submit" disabled={busy} className="admin-submit-btn" style={{ marginTop: '12px', width: 'auto', padding: '8px 18px' }}>
+              {busy ? 'Scheduling…' : 'Publish Tour Slot'}
+            </button>
+          </form>
+        )}
 
         {place.slots.length > 0 ? (
           <>
@@ -226,17 +333,31 @@ export default function PlaceDetailPage({ params }: { params: Promise<{ id: stri
                         : 'Fully booked'}
                     </span>
 
-                    <button
-                      disabled={!slot.remaining || busy || !userId}
-                      onClick={() =>
-                        submitAction(
-                          { type: 'booking', slotId: slot.id, seats },
-                          'Your seats are booked. Enjoy your tour!'
-                        )
-                      }
-                    >
-                      {slot.remaining > 0 ? 'Book tour' : 'Full'}
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <button
+                        disabled={!slot.remaining || busy || !userId}
+                        onClick={() =>
+                          submitAction(
+                            { type: 'booking', slotId: slot.id, seats },
+                            'Your seats are booked. Enjoy your tour!'
+                          )
+                        }
+                      >
+                        {slot.remaining > 0 ? 'Book tour' : 'Full'}
+                      </button>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => handleAdminDeleteSlot(slot.id)}
+                          className="admin-action-btn delete"
+                          style={{ padding: '6px 10px', fontSize: '11px', height: 'auto' }}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}

@@ -6,6 +6,13 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
+    // Ensure admin user exists in DB
+    await db.user.upsert({
+      where: { id: 'admin' },
+      create: { id: 'admin', name: 'Admin' },
+      update: {},
+    }).catch(() => {});
+
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     const category = url.searchParams.get('category');
